@@ -1,0 +1,70 @@
+<project name="jar" default="jar">
+  <description>
+  Provides the target for building a jar file of the example.
+  </description>
+
+  <import file="build.xml"/>
+  <property name="tmp.dir" location="${basedir}/tmp" />
+  <property name="tmp.lib.dir" location="${basedir}/tmp-lib" />
+ 
+  <target name="jar" depends="jar-server, jar-client" 
+    description="Create the client and the server jar files.">
+   </target>
+  
+  <target name="jar-server" depends="compile">
+    <delete dir="${tmp.dir}" quiet="yes"/>
+    <mkdir dir="${tmp.dir}" />
+    
+    <!-- Copy the class files for the "server" only. -->
+     <copy todir="${tmp.dir}">
+       <fileset dir="${basedir}/build/classes/">
+         <include name="**/server/**"/>
+         <include name="**/common/**"/>
+       </fileset>
+     </copy>
+    
+    <!-- Copy over the required libraries. --> 
+    <unjar dest="${tmp.dir}">
+      <fileset dir="${lib.dir}/restlet">
+        <include name="*.jar" />
+      </fileset>
+    </unjar>
+
+    <jar destfile="${basedir}/${system.name}-server.jar" basedir="${tmp.dir}">
+       <manifest>
+         <attribute name="Main-Class" value="${system.server.main.class}"/>
+       </manifest>
+     </jar>
+      <delete dir="${tmp.dir}" />
+  </target>     
+
+  <target name="jar-client" depends="compile">
+    <delete dir="${tmp.dir}" quiet="yes"/>
+    <mkdir dir="${tmp.dir}" />
+    
+    <!-- Copy the class files for the "client" only. -->
+    <copy todir="${tmp.dir}">
+      <fileset dir="${basedir}/build/classes/">
+        <include name="**/client/**"/>
+        <include name="**/common/**"/>
+      </fileset>
+    </copy>
+    
+    <!-- Copy over the required libraries. --> 
+    <unjar dest="${tmp.dir}">
+      <fileset dir="${lib.dir}/restlet">
+        <include name="*.jar" />
+      </fileset>
+    </unjar>
+
+    <jar destfile="${basedir}/${system.name}-client.jar" basedir="${tmp.dir}">
+       <manifest>
+         <attribute name="Main-Class" value="${system.client.main.class}"/>
+       </manifest>
+     </jar>
+      <delete dir="${tmp.dir}" />
+  </target>     
+
+  
+</project>
+
